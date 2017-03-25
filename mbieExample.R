@@ -70,6 +70,14 @@ dom <- RTEs %>%
   ) %>%
   data.frame()
 
+#This wrangles some data downloaded from Stats infoshare
+library(data.table)
+dtRTO <- fread("./RTO_Occupancy_2009_t_2015.csv")
+dtRTO[,Year:=sapply(strsplit(V1,"M"),"[[",1)]
+dtRTO[,Month:=sapply(strsplit(V1,"M"),"[[",2)]
+head(dtRTO)
+dtRTO[,lapply(.SD, mean, na.rm=TRUE),by="Year",.SDcols=-c("V1","Month","Year")]
+
 # merge the RTE with the data from the data slot of the RTO map
 data2 <- merge(RTO@data, dom, by="RTO")
 
